@@ -81,8 +81,9 @@ public class FruitBox {
         Predicate<Apple> belarusPredicate = apple -> COUNTRIES[0].equals(apple.getCountry());
         Predicate<Apple> brasilPredicate = apple -> COUNTRIES[2].equals(apple.getCountry());
         List<Apple> result = apples.stream().filter(belarusPredicate.or(brasilPredicate))
+                .sorted(comparing(Apple::getCountry).thenComparing(Apple::getWeight))
                 .collect(Collectors.toList());
-        result.sort(comparing(Apple::getCountry).thenComparing(Apple::getWeight));
+        //result.sort(comparing(Apple::getCountry).thenComparing(Apple::getWeight));
         return result;
     }
 
