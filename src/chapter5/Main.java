@@ -3,6 +3,8 @@ package chapter5;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import static java.util.stream.Collectors.toList;
 
@@ -11,13 +13,14 @@ import static java.util.stream.Collectors.toList;
  */
 public class Main {
 
-    private static final int N = 5;
-    private static final int M = 3;
     public static void main(String[] args) {
         testDistinct();
         getPairsDevidedBy3();
         fizzbuzz();
         fizzbuzzStream();
+        reduceExampleIntSum();
+        reduceMaxMin();
+        countUniqueWords();
     }
 
     private static void testDistinct() {
@@ -75,5 +78,47 @@ public class Main {
             return res.length() > 0 ? res : String.valueOf(i);
         }).collect(toList());
         System.out.print(b);
+    }
+
+    private static void reduceExampleIntSum() {
+        int[] numbers = {2, 4, 6, 9};
+        int sum = Arrays.stream(numbers).sum();
+        int reduceSum = Arrays.stream(numbers).reduce(0, (a, b) -> a + b);
+        int reduceMultiply = Arrays.stream(numbers).reduce(1, (a, b) -> a * b);
+        int reduceSum1 = Arrays.stream(numbers).reduce(0, Integer :: sum);
+        System.out.println("stream.sum(): " + sum);
+        System.out.println("stream sum with reduce: " + reduceSum);
+        System.out.println("stream multiply with reduce: " + reduceMultiply);
+        System.out.println("stream multiply with reduce: " + reduceSum1);
+
+    }
+
+    private static void reduceMaxMin() {
+        int[] numbers = {4, 5, 7, 11, 2, 1};
+        List<Integer> empty = new ArrayList<>();
+        OptionalInt max = Arrays.stream(numbers).reduce(Integer :: max);
+        OptionalInt min = Arrays.stream(numbers).reduce(Integer :: min);
+        Optional<Integer> emptyMin = empty.stream().reduce(Integer :: min);
+        System.out.println("max: " + max);
+        System.out.println("min: " + min);
+        System.out.println("min empty: " + emptyMin);
+    }
+
+    private static void countUniqueWords() {
+        List<String> words = Arrays.asList("map", "world", "hello", "map", "hello");
+        List<String> emptyCollection = new ArrayList<>();
+        Optional<Integer> count = words.stream().map(s -> 1).reduce(Integer :: sum);
+        Optional<Integer> uniqueCount = words.stream().distinct().map(s -> 1).reduce(Integer :: sum);
+        System.out.println("count words: " + count);
+        System.out.println("unique words: " + uniqueCount);
+        long helloCount = words.stream().filter("hello" :: equals).count();
+        long hello1Count = words.stream().filter("hello1" :: equals).count();
+        System.out.println("hello words count: " + helloCount);
+        System.out.println("hello1 words count: " + hello1Count);
+        //Return the first element of collection or "empty" if collection is empty;
+        String firstElement = words.stream().findFirst().orElse("empty");
+        String firstElementEmpty = emptyCollection.stream().findFirst().orElse("empty");
+        System.out.println("First element: " + firstElement);
+        System.out.println("First element of empty colledction: " + firstElementEmpty);
     }
 }
