@@ -13,6 +13,7 @@ import java.util.UUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.maxBy;
 import static java.util.stream.Collectors.minBy;
+import static java.util.stream.Collectors.summingDouble;
 
 public class TransactionService {
     private static final int TRANSACTION_COUNT = 8;
@@ -68,6 +69,14 @@ public class TransactionService {
             result.put(a, b.stream().map(Transaction :: getValue).reduce(0.0, Double :: sum));
         });
         return result;
+    }
+
+    /**
+     * Returns sum of values by cities.
+     * @return
+     */
+    public Map<String, Double> sumTransactionValuesByCityFunctional() {
+         return transactions.stream().collect(groupingBy(Transaction :: getCity, summingDouble(Transaction :: getValue)));
     }
 
     public Map<String, Double> sumTransactionValuesByCurrency() {

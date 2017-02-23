@@ -41,9 +41,11 @@ public class Main {
         Optional<Double> sum = service.sumTransactionValues();
         Map<String, Double> byCity = service.sumTransactionValuesByCity();
         Map<String, Double> byCurrency = service.sumTransactionValuesByCurrency();
+        Map<String, Double> byCityFunctional = service.sumTransactionValuesByCityFunctional();
 
         System.out.println(sum);
         System.out.println(byCity);
+        System.out.println(byCityFunctional);
         System.out.println(byCurrency);
     }
 }
