@@ -7,10 +7,12 @@ public class Dish {
 
     private String name;
     private int calories;
+    private DishType dishType;
 
-    public Dish(String name, int calories) {
+    public Dish(String name, int calories, DishType dishType) {
         this.name = name;
         this.calories = calories;
+        this.dishType = dishType;
     }
 
     public String getName() {
@@ -19,6 +21,10 @@ public class Dish {
 
     public int getCalories() {
         return calories;
+    }
+
+    public DishType getDishType() {
+        return dishType;
     }
 
     @Override
