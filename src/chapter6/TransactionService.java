@@ -10,7 +10,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.maxBy;
 import static java.util.stream.Collectors.minBy;
 import static java.util.stream.Collectors.summingDouble;
@@ -88,6 +90,18 @@ public class TransactionService {
             result.put(a, b.stream().map(Transaction :: getValue).reduce(0.0, Double :: sum));
         });
         return result;
+    }
+
+    public String joinTransactionIds() {
+        return transactions.stream().map(Transaction :: getId).collect(joining(","));
+    }
+
+    /**
+     * Returns max transaction values by cities.
+     * @return
+     */
+    public Map<String, Transaction> findMaxTransactionValues() {
+        return transactions.stream().collect(groupingBy(Transaction :: getCity, collectingAndThen(maxBy(Comparator.comparingDouble(Transaction :: getValue)), Optional :: get)));
     }
 
     public List<Transaction> getTransactions() {

@@ -20,6 +20,9 @@ public class Main {
 
         DishBox dishBox = new DishBox();
         getDishesByType(dishBox);
+
+        getTransactionIds(service);
+        findMaxTransactionValueByCity(service);
     }
 
     private static void groupTransactionsByCurrencies(TransactionService service) {
@@ -60,6 +63,18 @@ public class Main {
     private static void getDishesByType(DishBox dishBox) {
         System.out.println();
         Map<DishType, Set<CaloricLevel>> result = dishBox.getDishesByCaloricLevel();
+        System.out.println(result);
+    }
+
+    private static void getTransactionIds(TransactionService service) {
+        System.out.println();
+        String ids = service.joinTransactionIds();
+        System.out.println(ids);
+    }
+
+    private static void findMaxTransactionValueByCity(TransactionService service) {
+        System.out.println();
+        Map<String, Transaction> result = service.findMaxTransactionValues();
         System.out.println(result);
     }
 }
