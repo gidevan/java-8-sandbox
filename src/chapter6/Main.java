@@ -2,6 +2,7 @@ package chapter6;
 
 
 import chapter4.CaloricLevel;
+import chapter4.Dish;
 import chapter4.DishBox;
 import chapter4.DishType;
 
@@ -23,6 +24,15 @@ public class Main {
 
         getTransactionIds(service);
         findMaxTransactionValueByCity(service);
+
+        findDishesMultilevelGrouping(dishBox);
+        findDishesCount(dishBox);
+        findMaxDishCaloriesByType(dishBox);
+        findMaxCaloriesByType(dishBox);
+        findPartitionedByVegetarian(dishBox);
+        findVegetarianDishes(dishBox);
+        findPartitionedByVegetarianByType(dishBox);
+        getMostCaloricPartitionedByVegetarian(dishBox);
     }
 
     private static void groupTransactionsByCurrencies(TransactionService service) {
@@ -75,6 +85,54 @@ public class Main {
     private static void findMaxTransactionValueByCity(TransactionService service) {
         System.out.println();
         Map<String, Transaction> result = service.findMaxTransactionValues();
+        System.out.println(result);
+    }
+
+    private static void findDishesMultilevelGrouping(DishBox dishBox) {
+        System.out.println();
+        Map<DishType, Map<CaloricLevel, List<Dish>>> result = dishBox.findDishesMultilevelGrouping();
+        System.out.println(result);
+    }
+
+    private static void findDishesCount(DishBox dishBox) {
+        System.out.println();
+        Map<DishType, Long> dishCount = dishBox.findDishTypesCount();
+        System.out.println(dishCount);
+    }
+
+    private static void findMaxDishCaloriesByType(DishBox dishBox) {
+        System.out.println();
+        Map<DishType, Optional<Dish>> result = dishBox.findMaxCaloriesByTypeOptional();
+        System.out.println(result);
+    }
+
+    private static void findMaxCaloriesByType(DishBox dishBox) {
+        System.out.println();
+        Map<DishType, Dish> result = dishBox.findMaxCaloriesByType();
+        System.out.println(result);
+    }
+
+    private static void findPartitionedByVegetarian(DishBox dishBox) {
+        System.out.println();
+        Map<Boolean, List<Dish>> result = dishBox.partitionedByVegetarianMenu();
+        System.out.println(result);
+    }
+
+    private static void findVegetarianDishes(DishBox dishBox) {
+        System.out.println();
+        List<Dish> result = dishBox.getVegetarianDishes();
+        System.out.println(result);
+    }
+
+    private static void findPartitionedByVegetarianByType(DishBox dishBox) {
+        System.out.println();
+        Map<Boolean, Map<DishType, List<Dish>>> result = dishBox.findPartitionedByVegetarianByType();
+        System.out.println(result);
+    }
+
+    private static void getMostCaloricPartitionedByVegetarian(DishBox dishBox) {
+        System.out.println();
+        Map<Boolean, Dish> result = dishBox.getMostCaloricPartitionedByVegetarian();
         System.out.println(result);
     }
 }

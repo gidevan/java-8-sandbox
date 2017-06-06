@@ -27,6 +27,10 @@ public class Dish {
         return dishType;
     }
 
+    public boolean isVegetarian() {
+        return DishType.VEGETARIAN == dishType;
+    }
+
     @Override
     public String toString() {
         return "[name: " + name + ", calories: " + calories + "]";
