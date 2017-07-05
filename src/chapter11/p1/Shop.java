@@ -26,6 +26,11 @@ public class Shop {
         return new Random().nextDouble() * product.charAt(0) + product.charAt(1);
     }
 
+    private double calculatePriceException(String product) {
+        delay();
+        throw new IllegalStateException("Exception: " + product);
+    }
+
     public static void delay() {
         try {
             Thread.sleep(DELAY);
@@ -39,6 +44,19 @@ public class Shop {
         new Thread(() -> {
             double price = calculatePrice(product);
             futurePrice.complete(price);
+        }).start();
+        return futurePrice;
+    }
+
+    public Future<Double> getPriceAsyncException(String product) {
+        CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+        new Thread(() -> {
+            try {
+                double price = calculatePriceException(product);
+                futurePrice.complete(price);
+            } catch (Exception e) {
+                futurePrice.completeExceptionally(e);
+            }
         }).start();
         return futurePrice;
     }
