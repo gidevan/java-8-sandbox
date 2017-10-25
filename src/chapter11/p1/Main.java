@@ -1,10 +1,10 @@
 package chapter11.p1;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -12,6 +12,9 @@ import static java.util.stream.Collectors.toList;
  * Created by ivan on 4.7.17.
  */
 public class Main {
+    private static final int LENGTH = 10;
+    private static final int MAX_THREADS = 100;
+    private static final String SHOP_PREFIX = "Shop_";
 
     public static void main(String[] args) {
         test1();
@@ -19,6 +22,9 @@ public class Main {
         test3();
         test4ParallelStream();
         test5CompletableFuture();
+        test6CompletableFutureExecutor();
+
+        System.out.println("end");
     }
 
     private static void test1() {
@@ -94,6 +100,20 @@ public class Main {
         prices.stream().forEach(it -> System.out.println(it));
     }
 
+    /**
+     * The same as test3, but CompletableFuture and executor is used
+     */
+    private static final void test6CompletableFutureExecutor() {
+        System.out.println();
+        System.out.println("test6 (executor). Shop length: " + LENGTH);
+        List<Shop> shops = createShops(LENGTH);
+        long start = System.nanoTime();
+        List<String> prices = findPricesCompletableFutureExecutor(shops, "product12");
+        long duration = (System.nanoTime() - start) / 1_000_000;
+        System.out.println("duration: " + duration + " msecs");
+        prices.stream().forEach(it -> System.out.println(it));
+    }
+
     private static List<String> findPrices(List<Shop> shops, String product) {
         return shops.stream().map(shop -> String.format("%s price is %.2f", shop.getName(), shop.getPrice(product)))
                 .collect(toList());
@@ -110,11 +130,34 @@ public class Main {
         return shops;
     }
 
+    private static List<Shop> createShops(int length) {
+        List<Shop> shops = new ArrayList<>();
+        for(int i = 0; i < length; i++) {
+            shops.add(new Shop(SHOP_PREFIX + i));
+        }
+        return shops;
+    }
+
     private static List<String> findPricesCompletableFuture(List<Shop> shops, String product) {
         List<CompletableFuture<String>> futures = shops.stream().map(shop -> CompletableFuture.supplyAsync(
                 () -> shop.getName() + " price is " + shop.getPrice(product)
         )).collect(toList());
 
+        return futures.stream().map(CompletableFuture :: join).collect(toList());
+    }
+
+    private static List<String> findPricesCompletableFutureExecutor(List<Shop> shops, String product) {
+        Executor executor = Executors.newFixedThreadPool(Math.min(shops.size(), MAX_THREADS), new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread();
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+        List<CompletableFuture<String>> futures = shops.stream().map(shop -> CompletableFuture.supplyAsync(
+                () -> shop.getName() + " price is " + shop.getPrice(product), executor
+        )).collect(toList());
         return futures.stream().map(CompletableFuture :: join).collect(toList());
     }
 }
